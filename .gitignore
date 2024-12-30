@@ -1,0 +1,13 @@
+# ignore everything
+/*
+
+# don't ignore
+!.gitignore
+!README.md
+!LICENSE
+
+# Add folders back in
+!Scripts
+Scripts/*
+!Scripts/500_NuzlockeMode
+!NuzlockeMode_Data/
