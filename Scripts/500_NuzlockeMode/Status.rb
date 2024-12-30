@@ -12,9 +12,8 @@ GameData::Status.register({
 
 class Pokemon
   alias_method :original_heal_HP, :heal_HP
-
   def heal_HP
-    return if fainted?
+    return if fainted? && NuzlockeMode.active?
     original_heal_HP
   end
 end
