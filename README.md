@@ -26,3 +26,4 @@ I tested this mod with version 6.2.4 and 6.4.3 of Pokémon Infinite Fusion. All 
 # How to contribute
 
 Feel free to make a pull request or create an issue.
+Want a feature? Start a discussion!
