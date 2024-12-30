@@ -19,6 +19,10 @@ Simply copy the folders into the **Data** folder inside your **Pokemon Infinite 
 
 Delete the **NuzlockeMode_Data** folder inside the **Data** folder and the **500_NuzlockeMode** folder inside the **Scripts** folder inside **Data**.
 
+# Compatibility
+
+I tested this mod with version 6.2.4 and 6.4.3 of Pokémon Infinite Fusion. All versions in between should be compatible as well.
+
 # How to contribute
 
 Feel free to make a pull request or create an issue.
