@@ -1,3 +1,4 @@
+# Prevent items from being used in battles
 class PokeBattle_Battle
   alias_method :original_pbCanUseItemOnPokemon?, :pbCanUseItemOnPokemon?
   def pbCanUseItemOnPokemon?(item,pkmn,battler,scene,showMessages=true)

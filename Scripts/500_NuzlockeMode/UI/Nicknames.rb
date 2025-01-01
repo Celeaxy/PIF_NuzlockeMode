@@ -1,3 +1,8 @@
+# ----------------------------------------------------------------------------------------------------
+# TODO:
+#   - Create toggle
+# ----------------------------------------------------------------------------------------------------
+
 class PokemonEntryScene
   attr_reader :sprites # make sprites accessible to change text of helpwindow
 end

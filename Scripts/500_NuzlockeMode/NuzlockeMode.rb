@@ -1,3 +1,6 @@
+# ----------------------------------------------------------------------------------------------------
+# NuzlockeMode core module
+# ----------------------------------------------------------------------------------------------------
 module NuzlockeMode
   class << self
     attr_accessor :active
@@ -8,7 +11,10 @@ module NuzlockeMode
   end
 end
 
-# Can be swapped for a switch
+# ----------------------------------------------------------------------------------------------------
+# Data persistance
+# ----------------------------------------------------------------------------------------------------
+
 SaveData.register(:nuzlockeMode_active) do
   save_value { NuzlockeMode.active? }
   load_value { |value| NuzlockeMode.active = value }

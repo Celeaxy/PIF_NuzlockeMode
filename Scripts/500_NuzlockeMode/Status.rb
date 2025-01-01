@@ -263,3 +263,34 @@ end
 #     end
 #   end
 # end
+
+class PokeBattle_Battler
+  def pbFaint(showMessage=true)
+    if !fainted?
+      PBDebug.log("!!!***Can't faint with HP greater than 0")
+      return
+    end
+    # DIE
+    return if @fainted   # Has already fainted properly
+    msg = NuzlockeMode.active? && pbOwnedByPlayer? ? "died" : "fainted" 
+    @battle.pbDisplayBrief(_INTL("{1} {2}!",pbThis, msg)) if showMessage
+    updateSpirits()
+    PBDebug.log(_INTL("[Pokémon {1}] #{pbThis} (#{@index})", msg)) if !showMessage
+    @battle.scene.pbFaintBattler(self)
+    pbInitEffects(false)
+    # Reset status
+    self.status      = :DEAD
+    self.statusCount = 0
+    # Reset form
+    @battle.peer.pbOnLeavingBattle(@battle,@pokemon,@battle.usedInBattle[idxOwnSide][@index/2])
+    @pokemon.makeUnmega if mega?
+    @pokemon.makeUnprimal if primal?
+    # Do other things
+    @battle.pbClearChoice(@index)   # Reset choice
+    pbOwnSide.effects[PBEffects::LastRoundFainted] = @battle.turnCount
+    # Check other battlers' abilities that trigger upon a battler fainting
+    pbAbilitiesOnFainting
+    # Check for end of primordial weather
+    @battle.pbEndPrimordialWeather
+  end
+end
