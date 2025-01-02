@@ -176,6 +176,30 @@ def pbUnfuse(pokemon, scene, supersplicers, pcPosition = nil)
   end
 end
 
+# Hijack to reduce loading time, since loading twice takes too long and causes flickering
+class AnimatedBitmap
+  alias_method :original_initialize, :initialize
+  def initialize(file, hue = 0)
+    if file == _INTL("Graphics/Pictures/statuses")
+      file = _INTL("Data/NuzlockeMode_Data/statuses")
+    end
+    original_initialize(file, hue)
+  end
+end
+
+#Display dead status on party panel
+class PokemonPartyPanel
+  alias_method :original_initialize, :initialize
+  def initialize(pokemon, index, viewport = nil)
+    original_initialize(pokemon, index, viewport)
+    if pokemon.fainted?
+      status = GameData::Status.get(:DEAD).id_number
+      statusrect = Rect.new(0, 16 * status, 44, 16)
+      @overlaysprite.bitmap.blt(78, 68, @statuses.bitmap, statusrect)
+    end
+  end
+end
+
 # class PokemonSummary_Scene
 #   def drawPage(page)
 #     if @pokemon.egg?
