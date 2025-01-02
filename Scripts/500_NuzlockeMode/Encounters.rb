@@ -100,7 +100,7 @@ class PokemonEncounters
   alias_method :original_allow_encounter?, :allow_encounter?
   def allow_encounter?(enc_data, repel_active = false)
     return false if !original_allow_encounter?(enc_data, repel_active) || NuzlockeMode.preventEncounter?
-        NuzlockeMode.registerEncounter
+    NuzlockeMode.registerEncounter
     nuzlockeMode_updateEncounterTables
     return true
   end
@@ -135,6 +135,82 @@ def pbEncounter(enc_type)
     nuzlockeMode_updateEncounterTables
   end
   ret
+end
+
+
+# ----------------------------------------------------------------------------------------------------
+# Display remaining encounters in pause menu [WIP]
+# ----------------------------------------------------------------------------------------------------
+
+class EncounterWindow < SpriteWindow_Base
+  def initialize(enc_types, viewport = nil)
+    height = 0
+    width = 0
+    padding = 2
+    if enc_types && enc_types.length > 0
+      height = 64
+      width = 32*(enc_types.length+1) + padding*(enc_types.length-1)
+    end
+    super(0,0,width,height)
+    @viewport = viewport
+
+    bitmap_pos = {
+      "Land" => 0,
+      "Water" => 1,
+      "Cave" => 2,
+      "Rod" => 3,
+      "RockSmash" => 4,
+      "Headbutt" => 5
+    }
+    
+    content_w = 32+32*enc_types.length + padding*(enc_types.length-1)
+    @contents = Bitmap.new(content_w, 32)
+    enc_bitmap = Bitmap.new(_INTL("Data/NuzlockeMode_Data/encounters"))
+
+    for i in 0..enc_types.length
+      pos = bitmap_pos[enc_types[i]]
+      if pos
+        rect = Rect.new(0,pos*32,32,32)
+        self.contents.blt(i*(32+padding), 0, enc_bitmap, rect)
+      end
+    end
+  end
+end
+
+class PokemonPauseMenu_Scene 
+  alias_method :original_pbStartScene, :pbStartScene
+  def pbStartScene
+    original_pbStartScene
+    nuzlockeMode_createEncounterWindow
+  end
+
+  alias_method :original_pbShowMenu, :pbShowMenu
+  def pbShowMenu
+    original_pbShowMenu
+    nuzlockeMode_toggleEncounterWindow(true)
+  end
+
+  alias_method :original_pbHideMenu, :pbHideMenu
+  def pbHideMenu
+    original_pbHideMenu
+    nuzlockeMode_toggleEncounterWindow(false)
+  end
+
+  def nuzlockeMode_createEncounterWindow
+    return if !NuzlockeMode.active?
+    enc_types = $PokemonEncounters.nuzlockeMode_getEncounterTypes().map{|t| nuzlockeMode_generalize_enc_type(t)}.uniq
+    if enc_types.length > 0
+      @sprites["encwindow"] = EncounterWindow.new(enc_types, @viewport)
+      pbBottomLeft(@sprites["encwindow"])
+      @sprites["encwindow"].visible = true
+    end
+  end
+
+  def nuzlockeMode_toggleEncounterWindow(value = nil)
+    if @sprites["encwindow"]
+      @sprites["encwindow"].visible = value || !@sprites["encwindow"].visible
+    end
+  end
 end
 
 

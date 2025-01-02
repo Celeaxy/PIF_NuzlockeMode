@@ -10,6 +10,7 @@ These typical nuzlocke rules apply and are enforced by the mod:
 
 * Pokémon won't show up if you already own the species, fused or unfused. Fainted Pokémon aren't counted.
 * Since grinding wild Pokémon is not an option, Pokémon can be leveled up in the party menu.
+* Available encounters can be viewed in pause menu.
 
 # How to use
 
