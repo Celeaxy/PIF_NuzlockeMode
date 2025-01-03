@@ -1,9 +1,4 @@
 # ----------------------------------------------------------------------------------------------------
-# TODO:
-#   - Prohibit taking dead pokemon into party
-# ----------------------------------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------------------------------
 # NuzlockeMode status module
 # ----------------------------------------------------------------------------------------------------
 
@@ -78,6 +73,38 @@ class PokemonStorageScreen
       end
     end
     original_reverseFromPC(selected)
+  end
+
+  alias_method :original_pbWithdraw, :pbWithdraw
+  def pbWithdraw(selected, heldpoke)
+    if NuzlockeMode.active?
+      pokemon = heldpoke || @storage[selected[0], selected[1]]
+      if pokemon.fainted?
+        pbMessage("You can't withdraw a dead Pokémon!")
+        return
+      end
+    end
+    original_pbWithdraw(selected, heldpoke)
+  end
+
+  alias_method :original_pbPlace, :pbPlace
+  def pbPlace(selected)
+    # try to place dead Pokémon into team
+    if NuzlockeMode.active? && selected[0] == -1 && @heldpkmn.fainted? 
+      pbMessage("You can't withdraw a dead Pokémon!")
+      return
+    end
+    original_pbPlace(selected)
+  end
+
+  alias_method :original_pbSwap, :pbSwap
+  def pbSwap(selected)
+    # try to swap dead Pokémon into team
+    if NuzlockeMode.active? && selected[0] == -1 && @heldpkmn.fainted? 
+      pbMessage("You can't withdraw a dead Pokémon!")
+      return
+    end
+    original_pbSwap(selected)
   end
 end
 
