@@ -1,19 +1,19 @@
 GameData::Status.register({
   :id        => :POKERUS,
-  :id_number => 7,
+  :id_number => 6,
   :name      => _INTL("Pokerus"),
 })
 
 GameData::Status.register({
   :id        => :DEAD,
-  :id_number => 8,
+  :id_number => 7,
   :name      => _INTL("Dead"),
 })
 
 class Pokemon
   alias_method :original_heal_HP, :heal_HP
   def heal_HP
-    return if fainted? && NuzlockeMode.active?
+    return if NuzlockeMode.active? && fainted?
     original_heal_HP
   end
 end
@@ -303,7 +303,7 @@ class PokeBattle_Battler
     @battle.scene.pbFaintBattler(self)
     pbInitEffects(false)
     # Reset status
-    self.status      = :DEAD
+    self.status      = NuzlockeMode.active? ? :DEAD : :NONE
     self.statusCount = 0
     # Reset form
     @battle.peer.pbOnLeavingBattle(@battle,@pokemon,@battle.usedInBattle[idxOwnSide][@index/2])
