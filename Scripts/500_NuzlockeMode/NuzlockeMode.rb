@@ -7,7 +7,7 @@ module NuzlockeMode
   end
 
   def self.active?
-    self.active.to_s == 'true'
+    @active
   end
 end
 

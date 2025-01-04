@@ -17,7 +17,7 @@ module NuzlockeMode
   end
 
   def self.ballsReceived?
-    self.ballsReceived.to_s == 'true'
+    self.ballsReceived ||= $PokemonBag.nuzlockeMode_hasBalls?
   end
 
   def self.preventEncounter?(enc_type = nil)
@@ -87,12 +87,7 @@ class PokemonEncounters
   # Prevent encounters before having balls
   alias_method :original_encounter_possible_here?, :encounter_possible_here?
   def encounter_possible_here?
-    if NuzlockeMode.active?
-      if !NuzlockeMode.ballsReceived? && $PokemonBag.nuzlockeMode_hasBalls?
-        NuzlockeMode.ballsReceived = true
-      end
-      return false if !NuzlockeMode.ballsReceived?
-    end
+    return false if NuzlockeMode.active? && !NuzlockeMode.ballsReceived?
     original_encounter_possible_here?
   end
 
@@ -238,10 +233,10 @@ def nuzlockeMode_generalize_enc_type(enc_type)
   return enc_type # ???
 end
 
-# Returns a list of first stage species of the pokemon that @pkmn consists of
-def nuzlockeMode_getBabySpecies(pkmn)
-  headId = getHeadID(pkmn)
-  bodyId = species_is_fusion(pkmn) ? getBodyID(pkmn) : nil
+# Returns a list of first stage species of the species
+def nuzlockeMode_getBabySpecies(species)
+  headId = getHeadID(species)
+  bodyId = species_is_fusion(species) ? getBodyID(species) : nil
   head = headId ? GameData::Species.get(headId).get_baby_species : nil
   body = bodyId ? GameData::Species.get(bodyId).get_baby_species : nil
   return body ? [head, body] : [head]
