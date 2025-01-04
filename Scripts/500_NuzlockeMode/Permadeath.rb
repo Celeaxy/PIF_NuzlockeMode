@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# NuzlockeMode status module
+# NuzlockeMode permadeath module
 # ----------------------------------------------------------------------------------------------------
 
 GameData::Status.register({
@@ -272,7 +272,6 @@ end
 # ----------------------------------------------------------------------------------------------------
 
 # Pretty intrusive to change only a message, but w/e
-# 
 class PokeBattle_Battler
   def pbFaint(showMessage=true)
     if !fainted?
@@ -303,3 +302,39 @@ class PokeBattle_Battler
     @battle.pbEndPrimordialWeather
   end
 end
+
+
+# ----------------------------------------------------------------------------------------------------
+# Autostore dead Pokémon
+# ----------------------------------------------------------------------------------------------------
+def autostoreDead
+  return if !NuzlockeMode.active?
+  stored = {}
+  $Trainer.party.each_with_index { |pkmn, i|
+    if pkmn.fainted?
+      box = $PokemonStorage.pbStoreCaught(pkmn)
+      if box >= 0
+        boxname = $PokemonStorage[box].name
+        if !stored[boxname]
+          stored[boxname] = []
+        end
+        $Trainer.party[i] = nil
+        stored[boxname] << pkmn.name
+      end
+    end
+  }
+  $Trainer.party.compact!
+
+  for boxname, pkmn in stored
+    verb = pkmn.length > 1 ? "have" : "has"
+    pbMessage(_INTL("{1} {2} been stored in box {3}.", pkmn.join(", "), verb , boxname))
+  end
+end
+
+Events.onWildBattleEnd += proc { |_sender, _e| # _e = [species, level, decision]
+  autostoreDead
+}
+
+Events.onEndBattle += proc { |_sender, _e| # _e = [decision, canLose]
+  autostoreDead
+}
