@@ -1,7 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
 # TODO:
-#   - Web encounters
-#   - Shroom encounters
 #   - Static encounters like Voltorbs etc.
 #   - Restrict leaving arena after entering
 # ----------------------------------------------------------------------------------------------------
@@ -215,11 +213,13 @@ end
 
 # Returns a generalized encounter type
 def nuzlockeMode_generalize_enc_type(enc_type)
+  return "???" if enc_type == nil
+
   if enc_type.match(/^L/) # Land, LandDay, LandNight, LandMorning, LandAfternoon, LandEvening
     return "Land"
   elsif enc_type.match(/^C/) # Cave, CaveDay, CaveNight, CaveMorning, CaveAfternoon, CaveEvening
     return "Cave"
-  elsif enc_type.match(/^W/) # Water, WaterDay, WaterNight, WaterMorning, WaterAfternoon, WaterEvening
+  elsif enc_type.match(/^Wa/) # Water, WaterDay, WaterNight, WaterMorning, WaterAfternoon, WaterEvening
     return "Water"
   elsif enc_type.match(/Rod$/) # OldRod, GoodRod, SuperRod
     return "Rod"
@@ -229,8 +229,13 @@ def nuzlockeMode_generalize_enc_type(enc_type)
     return "RockSmash"
   elsif enc_type.match(/^B/) # BugContest
     return "BugContest"
+  elsif enc_type.match(/^Web$/)
+    return "Web"
+  elsif enc_type.match(/^Shroom$/)
+    return "Shroom"
   end
-  return enc_type # ???
+
+  return enc_type # encounters like voltorbs
 end
 
 # Returns a list of first stage species of the species
@@ -263,4 +268,20 @@ class PokemonBag
   def nuzlockeMode_hasBalls?
     $BallTypes.any? { |(k, ball)| pbHasItem?(ball) }
   end
+end
+
+# Handle webs and shrooms in Viridian Forest
+# TODO: handle other map specific encounters
+alias :original_pbWildBattle :pbWildBattle
+def pbWildBattle(species, level, outcomeVar=1, canRun=true, canLose=false)
+  case $game_map.map_id
+  when 491 # Viridian Forest
+    if species == :SPINARAK # web
+      NuzlockeMode.updateEncounterType(:Web)
+    elsif species == :PARAS # shroom
+      NuzlockeMode.updateEncounterType(:Shroom)
+    end
+  end
+  return if NuzlockeMode.preventEncounter?
+  original_pbWildBattle(species, level, outcomeVar, canRun, canLose)
 end
