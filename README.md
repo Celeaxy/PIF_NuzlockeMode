@@ -5,6 +5,7 @@ These typical nuzlocke rules apply and are enforced by the mod:
 * Only one encounter per route per encounter type. If the Pokémon flees or faints it's gone forever.
 * Pokémon must be nicknamed.
 * Items can't be used in battle.
+* If the encounter is a shiny, it can be caught no matter if it's a duplicate.
 
 # Misc
 
