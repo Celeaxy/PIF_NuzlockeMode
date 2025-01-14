@@ -15,7 +15,7 @@ These typical nuzlocke rules apply and are enforced by the mod:
 
 # How to use
 
-Simply copy the folders into the **Data** folder inside your **Pokemon Infinite Fusion** folder.
+Download [this Zip](https://github.com/Celeaxy/PIF_NuzlockeMode/archive/refs/heads/main.zip). Unpack it and simply copy the folders into the **Data** folder inside your **Pokemon Infinite Fusion** folder.
 
 # How to remove
 
